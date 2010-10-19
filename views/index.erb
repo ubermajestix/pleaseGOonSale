@@ -1,0 +1,16 @@
+<script>
+  $('iframe').find('span.addToBagBtn').click(function(){
+    var sku = jQuery(this).find('a:first').attr('id').replace('imglink','')
+    var url = "http://www.anthropologie.com/anthro/catalog/productdetail.jsp?id=" + sku
+    console.debug(url)
+    // store url in database
+    // fetch info about product every few minutes - or per request
+    // 
+    return false;
+  });
+
+</script>
+
+<iframe id="anthro" src="http://www.anthropologie.com/anthro/catalog/productdetail.jsp?id=18692251">
+
+</iframe>
