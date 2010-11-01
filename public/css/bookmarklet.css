@@ -1,0 +1,17 @@
+.pleasegoonsale{
+  color:#3c3c3c !important;
+  background : #efefef !important;
+  border-top : 2px solid #3c3c3c !important;
+  border-bottom : 2px solid #3c3c3c !important;
+  border-left : 2px solid #3c3c3c !important;
+  position:fixed !important;
+  z-index:9999 !important;
+  font-size:12pt !important;
+  font-family:arial,sans-serif !important;
+  text-align:left !important;
+  right:0px !important;
+  top:50px !important;
+  padding:20px !important;
+  height: 50px !important; 
+  width:305px !important;
+}

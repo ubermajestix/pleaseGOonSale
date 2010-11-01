@@ -1,0 +1,46 @@
+<html>
+<head>
+</head>
+<body>
+<center>
+<img src="/anthro/images/100110_refresh_404.jpg" border="0" usemap="#Map" />
+<map name="Map">
+  <area shape="rect" coords="105,272,372,309" href="http://www.anthropologie.com" alt="anthropologie.com">
+</map>
+</center>
+<script language="javascript1.1">
+<!--
+var cmJv="1.1";
+//-->
+</script>
+<script language="javascript1.2">
+<!--
+var cmJv="1.2";
+//-->
+</script>
+<script language="javascript1.3">
+<!--
+var cmJv="1.3";
+//-->
+</script>
+<script language="javascript1.4">
+<!--
+var cmJv="1.4";
+//-->
+</script>
+<script language="javascript1.5">
+<!--
+var cmJv="1.5";
+//-->
+</script>
+<script language="javascript1.1" src="/anthro/coremetrics/v40/eluminate.js"></script>
+<script language="javascript1.1" src="/anthro/coremetrics/v40/techprops.js"></script>
+<script language="javascript1.1" src="/coremetrics/cmdatatagutils.inc"></script>
+<script language="javascript1.1">
+<!--
+	cmSetProduction();
+	cmCreatePageviewTag("404", "ERROR", null);
+//-->
+</script>
+</body>
+</html>

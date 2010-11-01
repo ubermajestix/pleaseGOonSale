@@ -89,12 +89,13 @@ if (typeof $daemach["frameReady"] == "undefined") {
 }
  
 jQuery.frameReady = function(f,t,r,j) {
+	log('frame ready...')
 	
 	/************************************************************
 		You must specify the path to your jquery.js file below!	
 	*************************************************************/
 	
-	var jQueryPath = "/js/jQuery.js";
+	var jQueryPath = "/js/jquery-1.4.2.min.js";
 	
 	var u = "undefined";	
 	var $fr = $daemach["frameReady"];
@@ -119,7 +120,7 @@ jQuery.frameReady = function(f,t,r,j) {
 		$daemach.log(fr.target + " is ready.  Running functions now.");
 		return (frs.remote) ? eval(fr.target).eval("(" + f.toString() + ")()") : f(); 
 	};
-	
+	log('$fr', $fr)
 	// process arguments
 
 	for (var a=2;a<arguments.length;a++){
