@@ -2,9 +2,7 @@ require 'rubygems'
 require 'sinatra'
 require 'json'
 require 'dragonfly'
-require 'dm-core'
-require 'dm-migrations'
-require 'dm-validations'
+require 'sinatra/activerecord'
 require 'less'
 require 'open-uri' # so we can stream the swatch file
 require 'chunky_png'
@@ -12,13 +10,9 @@ require 'chunky_png'
 
   search_me = ::File.expand_path(::File.join(::File.dirname(__FILE__), 'models', '*.rb'))
   Dir.glob(search_me).sort.each {|rb| require rb}
-  # setup logger before connection is made
-  DataMapper::Logger.new(STDOUT, :debug)
-  DataMapper.setup(:default, "sqlite:///#{Dir.pwd}/onsale.db")
-  # ENV['RACK_ENV'] != 'production' ? DataMapper.auto_migrate! :
-  DataMapper.auto_upgrade!
-  # DataMapper.setup(:default, "postgres://user:pass@localhost/pleasegoonsale")
-
+  
+  set :database, 'sqlite://onsale.db'
+  
   # Dragonfly[:images].configure_with(:rmagick) do |d|
   #   d.url_path_prefix = '/media'
   # end
@@ -31,7 +25,9 @@ require 'chunky_png'
 
   get '/' do
     @bookmarklet = File.read("#{Dir.pwd}/public/js/bookmarklet.js")
-    @items = Item.all(:price.not => nil)
+    # @items = Item.all(:price.not => nil)
+    @items = Item.all
+    
     erb :index
   end
 
@@ -46,9 +42,10 @@ require 'chunky_png'
   end
 
   get "/customer/item/create" do
-    puts "="*45
-    puts params.inspect
-    puts "="*45
     item = Item.create(params['item'])
     params["jsonp"] + "(#{item.to_json})"
+  end
+  
+  post "/sale_item/create" do
+    SaleItem.create(JSON.parse(params['item']))
   end

@@ -4,6 +4,7 @@ require 'rubygems'
 require 'logging'
 require 'patron'
 require 'nokogiri'
+require 'ostruct'
 
 class Scraper
 
@@ -28,6 +29,13 @@ class Scraper
     return @patron
   end
   
+  def pgos_patron
+    @pgos_patron ||= Patron::Session.new
+    @pgos_patron.headers["User-Agent"] = "pgos-scraper 0.0"
+    @pgos_patron.base_url = "http://localhost:9393"
+    return @pgos_patron
+  end
+  
   def start(opts={})
     # go to store sale url
     # for anthro: get all sale categories, go to those links and then pull all items
@@ -39,22 +47,52 @@ class Scraper
     r = patron.get('/anthro/catalog/category.jsp?id=SHOPSALE')
     if r.status < 400
        doc = Nokogiri::HTML(r.body)
-       categories = doc.search('#leftnav-content li a').map{|e| e.get_attribute('href')}.compact.uniq.map{|e| m = e.match(/(\?|\&)(id\=)(\S+)/); m[3]}
+       categories = doc.search('#leftnav-content li a').map{|e| e.get_attribute('href')}.compact.uniq.map{|e| e.match(/(\?|\&)(id\=)(\S+)/)[3]}
        puts "="*45
        puts categories.length
        puts "="*45
        category_threads = []
        categories.each do |category|
-         category_threads<< Thread.new(category) {|cat_id|
-           r = patron.get("/anthro/catalog/category.jsp?viewAllOnOnePage=yes&id=#{cat_id}")
+         # category_threads<< Thread.new(category) {|cat_id|
+           logger.info("getting #{category}")
+           begin
+           r = patron.get("/anthro/catalog/category.jsp?viewAllOnOnePage=yes&id=#{category}")
            if r.status < 400
+             logger.info('got response')
              doc = Nokogiri::HTML(r.body)
+             puts doc.css('td').length
+             doc.css('td').each do |e|
+               if(e.at_css('div.imageWrapper'))
+                 item = OpenStruct.new
+                 item.sku                 = e.at_css('div.imageWrapper a').get_attribute('href').match(/(\?|\&)(id\=)(\d+)/)[3]
+                 item.store_url           = "http://www.anthropologie.com/anthro/catalog/productdetail.jsp?&id=" << item.sku
+                 item.image_url           = e.css('div.colorSelector script').last.inner_html.match(/(http:\/\/\S+)(\?)/)[1]
+                 item.name                = e.at_css('div.imageWrapper img').get_attribute('title')
+                 item.raw_sale_price      = e.at_css('span.PriceAlertText').text.strip.inspect
+                 item.raw_original_price  = e.at_css('span.wasPrice').text.gsub('...was ','')
+                 item.raw_colors          = []
+                 e.css('div.colorSelector img').each do |color|
+                  item.raw_colors << {:swatch_url => color.get_attribute('src'), :name => color.get_attribute('alt')}
+                 end
+                 puts item.sku
+                 r = pgos_patron.post("/sale_item/create", {:item => item.marshal_dump.to_json})
+                 if r.status < 400
+                   logger.info('posted item.')
+                 else
+                   logger.error("Could not post item: #{item.inspect}")
+                 end
+                 puts "="*45
+                end
+             end
            else
              logger.error("#{cat_id} returned #{r.status}")
            end
-         }
-         #C40D1F
-         category_threads.each{|t| t.join}
+         # }
+         # category_threads.each{|t| t.join}
+         rescue StandardError => e
+           logger.error(e.inspect)
+           logger.error(e.backtrace.join("\n"))
+         end
        end
     else
       logger.error("#{r.base_url} returned #{r.status}")
