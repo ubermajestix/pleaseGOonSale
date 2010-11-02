@@ -26,6 +26,7 @@ class Scraper
     @patron ||= Patron::Session.new
     @patron.headers["User-Agent"] = random_browser_agent
     @patron.base_url = "http://www.anthropologie.com"
+    @patron.timeout = 10
     return @patron
   end
   
@@ -37,13 +38,8 @@ class Scraper
   end
   
   def start(opts={})
-    # go to store sale url
-    # for anthro: get all sale categories, go to those links and then pull all items
-    # use my api endpoint and make a web request with a json blob of data (maybe use workers?)
-    
-    # get sale categories
-    # 61:    r = patron.post("/services/v3/source_commits", xml)
-    # http://www.anthropologie.com/anthro/catalog/category.jsp?id=SHOPSALE
+    # TODO basic auth this stuff
+    pgos_patron.delete('/sale_items/delete_all')
     r = patron.get('/anthro/catalog/category.jsp?id=SHOPSALE')
     if r.status < 400
        doc = Nokogiri::HTML(r.body)
@@ -56,34 +52,35 @@ class Scraper
          # category_threads<< Thread.new(category) {|cat_id|
            logger.info("getting #{category}")
            begin
-           r = patron.get("/anthro/catalog/category.jsp?viewAllOnOnePage=yes&id=#{category}")
+           r = patron.get("/anthro/catalog/category.jsp?displayNumber=10000&itemCount=10000&id=#{category}")
            if r.status < 400
              logger.info('got response')
              doc = Nokogiri::HTML(r.body)
              puts doc.css('td').length
-             doc.css('td').each do |e|
-               if(e.at_css('div.imageWrapper'))
-                 item = OpenStruct.new
-                 item.sku                 = e.at_css('div.imageWrapper a').get_attribute('href').match(/(\?|\&)(id\=)(\d+)/)[3]
-                 item.store_url           = "http://www.anthropologie.com/anthro/catalog/productdetail.jsp?&id=" << item.sku
-                 item.image_url           = e.css('div.colorSelector script').last.inner_html.match(/(http:\/\/\S+)(\?)/)[1]
-                 item.name                = e.at_css('div.imageWrapper img').get_attribute('title')
-                 item.raw_sale_price      = e.at_css('span.PriceAlertText').text.strip.inspect
-                 item.raw_original_price  = e.at_css('span.wasPrice').text.gsub('...was ','')
-                 item.raw_colors          = []
-                 e.css('div.colorSelector img').each do |color|
-                  item.raw_colors << {:swatch_url => color.get_attribute('src'), :name => color.get_attribute('alt')}
-                 end
-                 puts item.sku
-                 r = pgos_patron.post("/sale_item/create", {:item => item.marshal_dump.to_json})
-                 if r.status < 400
-                   logger.info('posted item.')
-                 else
-                   logger.error("Could not post item: #{item.inspect}")
-                 end
-                 puts "="*45
-                end
-             end
+             # doc.css('td').each do |e|
+             #   if(e.at_css('div.imageWrapper'))
+             #     item = OpenStruct.new
+             #     item.sku                 = e.at_css('div.imageWrapper a').get_attribute('href').match(/(\?|\&)(id\=)(\d+)/)[3]
+             #     item.store_url           = "http://www.anthropologie.com/anthro/catalog/productdetail.jsp?&id=" << item.sku
+             #     item.image_url           = e.css('div.colorSelector script').last.inner_html.match(/(http:\/\/\S+)(\?)/)[1]
+             #     item.name                = e.at_css('div.imageWrapper img').get_attribute('title')
+             #     item.raw_sale_price      = e.at_css('span.PriceAlertText').text.strip.inspect
+             #     item.raw_original_price  = e.at_css('span.wasPrice').text.gsub('...was ','')
+             #     item.raw_colors          = []
+             #     e.css('div.colorSelector img').each do |color|
+             #      item.raw_colors << {:swatch_url => color.get_attribute('src'), :name => color.get_attribute('alt')}
+             #     end
+             #     logger.info "Saving #{item.sku}"
+             #     r = pgos_patron.post("/sale_item/create", {:item => item.marshal_dump.to_json})
+             #     if r.status < 400
+             #       logger.info('posted item.')
+             #     else
+             #       logger.error("Could not post item: #{item.inspect}")
+             #     end
+             #     puts "="*45
+             #    end
+             # end
+             # pgos_patron.get('/sale_items/match')
            else
              logger.error("#{cat_id} returned #{r.status}")
            end

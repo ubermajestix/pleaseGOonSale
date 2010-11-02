@@ -9,6 +9,14 @@ class SaleItem < ActiveRecord::Base
   
   has_many :colors, :foreign_key => :sku
   
+  def self.match
+    sale_items = SaleItem.all
+    items_on_sale = Item.all(:conditions=>["sku in (?)", sale_items.map(&:sku)])
+    puts "="*45
+    puts "found #{items_on_sale.length} customer saved items on sale"
+    puts "="*45
+  end
+  
   def formatted_price
     "$%.2f" % (self.price/100.0)
   end

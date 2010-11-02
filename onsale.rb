@@ -49,3 +49,11 @@ require 'chunky_png'
   post "/sale_item/create" do
     SaleItem.create(JSON.parse(params['item']))
   end
+  
+  delete "/sale_items/delete_all" do
+    SaleItem.delete_all
+  end
+  
+  get "/sale_items/match" do
+    SaleItem.match
+  end
