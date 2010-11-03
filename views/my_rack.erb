@@ -1,0 +1,17 @@
+drag this link into your bookmarks:    
+<a title="drag this to your bookmarks" href="<%= @bookmarklet %>">pleasegoOnSale!</a>
+<h2><%= @items.length %> items</h2>
+<% @items.each do |item| %>
+  <tr>
+    <td><img src="<%= item.image_url %>"></td>
+    <td><%= item.name %></td>
+    <td><%= item.formatted_price %></td>
+    <td><a href="<%= item.store_url %>">view</a></td>
+    <td>in <%= item.colors.length %> colors: 
+      <% item.colors.each do |color| %>
+        <span style="background:<%= color.hex %>;height:10px; width:10px; margin:5px; padding:3px;"><%= color.name  %></span>
+      <% end %>
+    </td>
+    <td><%= item.sku %></td>
+  </tr>
+<% end %>

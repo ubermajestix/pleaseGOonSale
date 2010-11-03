@@ -19,8 +19,18 @@
 	</head> 
 	<body>
 	  <div class="header">
-	    <div class="log">
+	    <div class="userinfo">
+	      <%if logged_in? %>
+  	      <a href="/user/edit"><%= current_user.email  %></a> |
+  	      <a href="/logout">logout</a>
+	      <% else %>
+	        <a href="/login">login</a> | 
+	        <a href="/signup">signup</a>
+	      <% end %>
 	    </div>
+	    <div class="logo">
+	    </div>
+	    notice: <%= flash[:notice] %> <br/>
 	  </div>
 	  <div class="wrapper">
       <%= yield %>

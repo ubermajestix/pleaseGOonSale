@@ -10,6 +10,7 @@ require 'pony'
 require 'bcrypt'
 require 'extlib'
 require 'digest/sha1'
+require 'rack-flash'
 Dir['models/*'].each{|m| require m}
 Dir['lib/*.rb'].each{|l| require l}
 

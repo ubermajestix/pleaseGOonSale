@@ -2,21 +2,30 @@ class User < ActiveRecord::Base
   
   attr_accessor :password
   
-  validates_presence_of :email
+  validates_presence_of :name
+  validates_uniqueness_of :email
   validates_format_of   :email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i
   
   before_create :check_password
   # TODO rake task that deletes/locks users after x days of not confirming
   before_create :create_confirmation_code
   
+  has_many :items
+  
+  
   def self.authenticate(email, password)
     u = User.first( :conditions => {:email=>email})
-    u && u.authenticated?(password) ? u : nil
+    u && u.authenticated?(password) && u.has_confirmed ? u : nil
+  end
+  
+  def self.confirmed?(email)
+    u = User.first( :conditions => {:email=>email})
+    u && u.has_confirmed
   end
   
   def self.confirm(code)
     u = first(:conditions=>{:confirmation_code => code})
-    u ? u.update_attributes(:has_confirmed => true) : nil
+    u ? (u.update_attributes(:has_confirmed => true); return u) : nil
   end
   
   def authenticated?(password)

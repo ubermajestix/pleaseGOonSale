@@ -7,6 +7,7 @@ class CreateItem < ActiveRecord::Migration
       t.integer :price
       t.string :store_url
       t.string :image_url
+      t.integer :user_id
     end
   end
 

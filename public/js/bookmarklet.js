@@ -1,4 +1,6 @@
 javascript:(function(){var%20s=document.createElement('div');
+api_key = '';
+host = '';
 
 s.style.display = 'none';
 

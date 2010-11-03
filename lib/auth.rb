@@ -5,9 +5,6 @@ module Sinatra
     end
     
     def login_required
-      puts "="*45
-      puts logged_in?
-      puts "="*45
       env['warden'].authenticate!(:password) unless logged_in?
     end
     
