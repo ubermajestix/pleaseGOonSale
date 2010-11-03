@@ -22,7 +22,7 @@
       var image_url = $('meta[name="imageURL"]').attr('content')
       var colors = []
       $("#tabBlock2 img").each(function(i,e){log($(e));colors.push({swatch_url: $(e).attr('src'), name: $(e).attr('alt')})})
-      var item = {sku: sku, name: name, raw_price: price, image_url: image_url, store_url: url, raw_colors: colors}
+      var item = {sku: sku, name: name, raw_price: price, image_url: image_url, store_url: "http://" + window.location.host + "?id=" + sku, raw_colors: colors}
       log(item)
       log(api_key)
       log(host)

@@ -6,7 +6,7 @@ s.style.display = 'none';
 
 s.setAttribute('class','cleanslate pleasegoonsale');
 
-s.innerHTML='<img src=\'images/loader.gif\'/> loading...';
+s.innerHTML='<img src=\'http://<-host->/images/loader.gif\'/> loading...';
 
 document.body.appendChild(s);
 
@@ -16,7 +16,7 @@ s=document.createElement('script');
 
 s.setAttribute('type','text/javascript');
 
-s.setAttribute('src','http://localhost:9393/js/loader.localhost.js');
+s.setAttribute('src','http://<-host->/js/loader.js');
 
 document.body.appendChild(s);
 

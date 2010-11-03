@@ -1,4 +1,4 @@
-require 'lib/scraper'
+require './lib/scraper'
 namespace :scrape do
   desc "scrape anthro's sale items"
   task :anthro do

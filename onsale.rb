@@ -1,10 +1,10 @@
-require 'environment'
+require './environment'
  
 class OnsaleApp < Sinatra::Base
  
-  enable :static, :session, :reload
+  enable :session, :reload
   set :database, 'sqlite://development.db'
-  
+  set :app_file, __FILE__
   helpers Sinatra::Auth
   use Rack::Flash
   
@@ -14,6 +14,7 @@ class OnsaleApp < Sinatra::Base
   
   before '*' do
     flash[:notice] = nil
+    @host = env['HTTP_HOST']
     # puts "="*45
     # puts env.keys.sort
     # puts "="*45
@@ -30,7 +31,8 @@ class OnsaleApp < Sinatra::Base
     logged_in?
     @bookmarklet = File.read("#{Dir.pwd}/public/js/bookmarklet.js")
     @bookmarklet.gsub!("api_key = ''", "api_key = '#{current_user.confirmation_code}'")
-    @bookmarklet.gsub!("host = ''", "host = '#{env['HTTP_HOST']}'")
+    @bookmarklet.gsub!("host = ''", "host = '#{@host}'")
+    @bookmarklet.gsub!("<-host->", @host)
     user = User.find(current_user.id)
     @items = user.items.reverse
     erb :my_rack

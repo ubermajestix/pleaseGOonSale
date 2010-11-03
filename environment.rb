@@ -11,8 +11,8 @@ require 'bcrypt'
 require 'extlib'
 require 'digest/sha1'
 require 'rack-flash'
-Dir['models/*'].each{|m| require m}
-Dir['lib/*.rb'].each{|l| require l}
+Dir['./models/*'].each{|m| require m}
+Dir['./lib/*.rb'].each{|l| require l}
 
 # require 'dragonfly'
 # Dragonfly[:images].configure_with(:rmagick) do |d|
