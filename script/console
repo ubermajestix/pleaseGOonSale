@@ -1,0 +1,9 @@
+#!/usr/bin/env ruby -rubygems
+require 'activerecord'
+Dir['models/*'].each{|m| require m}
+ ActiveRecord::Base.establish_connection(:adapter => "sqlite3", :database => "#{Dir.pwd}/development.db")
+ puts "#{Dir.pwd}/onsale.db"
+ require 'irb'
+IRB.start(__FILE__)
+
+

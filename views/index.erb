@@ -3,7 +3,7 @@ drag this link into your bookmarks:
 <h2><%= @items.length %> items</h2>
 <% @items.each do |item| %>
   <tr>
-    <td><img src="<%= item.image_url %>"></td>
+    <td><img src="<%#= item.image_url %>"></td>
     <td><%= item.name %></td>
     <td><%= item.formatted_price %></td>
     <td><a href="<%= item.store_url %>">view</a></td>

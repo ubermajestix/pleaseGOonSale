@@ -30,16 +30,9 @@ class Scraper
     return @patron
   end
   
-  def pgos_patron
-    @pgos_patron ||= Patron::Session.new
-    @pgos_patron.headers["User-Agent"] = "pgos-scraper 0.0"
-    @pgos_patron.base_url = "http://localhost:9393"
-    return @pgos_patron
-  end
-  
   def start(opts={})
     # TODO basic auth this stuff
-    pgos_patron.delete('/sale_items/delete_all')
+    SaleItem.delete_all
     r = patron.get('/anthro/catalog/category.jsp?id=SHOPSALE')
     if r.status < 400
        doc = Nokogiri::HTML(r.body)
@@ -49,7 +42,8 @@ class Scraper
        puts "="*45
        category_threads = []
        categories.each do |category|
-         # category_threads<< Thread.new(category) {|cat_id|
+         category_threads << Thread.new(category) {|cat_id|
+           category = cat_id
            logger.info("getting #{category}")
            begin
            r = patron.get("/anthro/catalog/category.jsp?displayNumber=10000&itemCount=10000&id=#{category}")
@@ -57,39 +51,41 @@ class Scraper
              logger.info('got response')
              doc = Nokogiri::HTML(r.body)
              puts doc.css('td').length
-             # doc.css('td').each do |e|
-             #   if(e.at_css('div.imageWrapper'))
-             #     item = OpenStruct.new
-             #     item.sku                 = e.at_css('div.imageWrapper a').get_attribute('href').match(/(\?|\&)(id\=)(\d+)/)[3]
-             #     item.store_url           = "http://www.anthropologie.com/anthro/catalog/productdetail.jsp?&id=" << item.sku
-             #     item.image_url           = e.css('div.colorSelector script').last.inner_html.match(/(http:\/\/\S+)(\?)/)[1]
-             #     item.name                = e.at_css('div.imageWrapper img').get_attribute('title')
-             #     item.raw_sale_price      = e.at_css('span.PriceAlertText').text.strip.inspect
-             #     item.raw_original_price  = e.at_css('span.wasPrice').text.gsub('...was ','')
-             #     item.raw_colors          = []
-             #     e.css('div.colorSelector img').each do |color|
-             #      item.raw_colors << {:swatch_url => color.get_attribute('src'), :name => color.get_attribute('alt')}
-             #     end
-             #     logger.info "Saving #{item.sku}"
-             #     r = pgos_patron.post("/sale_item/create", {:item => item.marshal_dump.to_json})
-             #     if r.status < 400
-             #       logger.info('posted item.')
-             #     else
-             #       logger.error("Could not post item: #{item.inspect}")
-             #     end
-             #     puts "="*45
-             #    end
-             # end
-             # pgos_patron.get('/sale_items/match')
+             item_threads = []
+             doc.css('td').each do |e|
+               item_threads << Thread.new(e) {|element|
+                 e = element
+                 if(e.at_css('div.imageWrapper'))
+                   item = OpenStruct.new
+                   item.sku                 = e.at_css('div.imageWrapper a').get_attribute('href').match(/(\?|\&)(id\=)(\d+)/)[3]
+                   item.store_url           = "http://www.anthropologie.com/anthro/catalog/productdetail.jsp?&id=" << item.sku
+                   item.image_url           = e.css('div.colorSelector script').last.inner_html.match(/(http:\/\/\S+)(\?)/)[1]
+                   item.name                = e.at_css('div.imageWrapper img').get_attribute('title')
+                   item.raw_sale_price      = e.at_css('span.PriceAlertText').text.strip.inspect
+                   item.raw_original_price  = e.at_css('span.wasPrice').text.gsub('...was ','')
+                   item.raw_colors          = []
+                   e.css('div.colorSelector img').each do |color|
+                    item.raw_colors << {:swatch_url => color.get_attribute('src'), :name => color.get_attribute('alt')}
+                   end
+                   logger.info "Saving #{item.sku}"
+                   if SaleItem.create(item.marshal_dump)
+                     logger.info("Saved #{item.sku}")
+                   else
+                     logger.error("Could not create item: #{item.inspect}")
+                   end
+                 end
+               }
+               item_threads.each{|t| t.join}
+             end
            else
              logger.error("#{cat_id} returned #{r.status}")
            end
-         # }
-         # category_threads.each{|t| t.join}
-         rescue StandardError => e
-           logger.error(e.inspect)
-           logger.error(e.backtrace.join("\n"))
-         end
+           rescue StandardError => e
+             logger.error(e.inspect)
+             logger.error(e.backtrace.join("\n"))
+           end
+         }
+         category_threads.each{|t| t.join}
        end
     else
       logger.error("#{r.base_url} returned #{r.status}")

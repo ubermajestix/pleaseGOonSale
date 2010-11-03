@@ -1,36 +1,91 @@
-require 'rubygems'
-require 'sinatra'
-require 'json'
-require 'dragonfly'
-require 'sinatra/activerecord'
-require 'less'
-require 'open-uri' # so we can stream the swatch file
-require 'chunky_png'
-  set :static, true
-
-  search_me = ::File.expand_path(::File.join(::File.dirname(__FILE__), 'models', '*.rb'))
-  Dir.glob(search_me).sort.each {|rb| require rb}
-  
-  set :database, 'sqlite://onsale.db'
-  
-  # Dragonfly[:images].configure_with(:rmagick) do |d|
-  #   d.url_path_prefix = '/media'
-  # end
-  # Dragonfly[:images].configure_with(:heroku, 'pleasegoonsale') # if Rails.env.production?
-  # 
-  # use Dragonfly::Middleware, :images, '/media'
-
-
-
-
+require 'environment'
+ 
+class OnsaleApp < Sinatra::Base
+ 
+  enable :static, :session, :reload
+  set :database, 'sqlite://development.db'
+  helpers Sinatra::Auth
+  before "/customer*" do
+    login_required
+  end
   get '/' do
+    redirect '/customer'
+  end
+  
+  get '/customer' do
+    logged_in?
     @bookmarklet = File.read("#{Dir.pwd}/public/js/bookmarklet.js")
     # @items = Item.all(:price.not => nil)
     @items = Item.all
-    
     erb :index
   end
+  
+  get "/customer/item/create" do
+    item = Item.create(params['item'])
+    params["jsonp"] + "(#{item.to_json})"
+  end
+  
+  get '/send_email' do
+  end
 
+  #------------
+  # User Login
+  #------------
+  get '/unauthenticated/?' do
+    status 401
+    user_view :login
+  end
+  
+  post '/unauthenticated/?' do
+    status 401
+    user_view :login
+  end
+
+  get '/login/?' do
+    user_view :login
+  end
+  
+  post '/login/?' do
+    if env['warden'].authenticate!(:password)
+      # TODO drop cookie for bookmarklet
+      redirect "/customer"
+    else
+      user_view :login
+    end
+  end
+  
+  get '/logout/?' do
+    env['warden'].logout
+    redirect '/login'
+  end
+  
+  get '/signup/?' do
+    @user = User.new
+    user_view :new
+  end
+  
+  post '/signup/?' do
+    @user = User.new(params[:user])
+    if @user.save
+      # TODO send confirm email
+      Mailer.mail(:to=>@user.email, :html_body=>user_view(:confirmation))
+      redirect "/customer"
+    else
+      puts @user.errors.inspect
+      user_view :new
+    end
+  end
+  
+  get '/confirm/:confirmation_code' do
+    if User.confirm(params[:confirmation_code])
+      redirect "/customer"
+    else
+      user_view :whoops
+    end
+  end
+  #------------
+  # Less CSS
+  #------------
   get '/less/uber.css' do
     content_type 'text/css', :charset => 'utf-8'
     less :uber
@@ -40,20 +95,7 @@ require 'chunky_png'
     content_type 'text/css', :charset => 'utf-8'
     less :bookmarklet
   end
-
-  get "/customer/item/create" do
-    item = Item.create(params['item'])
-    params["jsonp"] + "(#{item.to_json})"
-  end
   
-  post "/sale_item/create" do
-    SaleItem.create(JSON.parse(params['item']))
-  end
   
-  delete "/sale_items/delete_all" do
-    SaleItem.delete_all
-  end
   
-  get "/sale_items/match" do
-    SaleItem.match
-  end
+end

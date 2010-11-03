@@ -1,0 +1,25 @@
+<div class="span-24">
+  <div class="span-15 colborder">
+    <h2>SignUp</h2>
+    <%if @user.errors.any? %>
+    <div class="errors">
+      <%for error in @user.errors %>
+        <%= error.to_yaml %>
+      <%end%>
+    </div>
+    <% end %>
+    <form method="post" action="/signup" id="dummy">
+      <fieldset>
+        <p>
+          <label for="user">email:</label><br/>
+          <input type="text" name="user[email]" value="<%= @user.email %>">
+        </p>
+        <p>
+          <label for="password">password:</label><br/>
+          <input type="password" name="user[password]" value="">
+        </p> 
+        <p><input type="submit" name="" value="sign up!" id="sign up"> </p>
+      </fieldset>
+    </form>
+  </div>
+</div>
