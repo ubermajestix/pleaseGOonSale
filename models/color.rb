@@ -1,3 +1,4 @@
+require 'open-uri' # so we can stream the swatch file
 class Color < ActiveRecord::Base
   
   attr_accessor :swatch_url
@@ -6,6 +7,9 @@ class Color < ActiveRecord::Base
   # TODO validate hex is unique for a given sku
   
   before_validation :process_swatch
+  
+  has_many :items, :through => :items_colors
+  
   
 private
   

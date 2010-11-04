@@ -1,9 +1,9 @@
 #!/usr/bin/env ruby -rubygems
-require 'activerecord'
-Dir['models/*'].each{|m| require m}
- ActiveRecord::Base.establish_connection(:adapter => "sqlite3", :database => "#{Dir.pwd}/development.db")
- puts "#{Dir.pwd}/onsale.db"
- require 'irb'
+require 'active_record'
+Dir['./models/*'].each{|m| require m}
+ENV['RACK_ENV'] ||= 'development'
+ActiveRecord::Base.establish_connection(:adapter => "sqlite3", :database => "#{Dir.pwd}/#{ENV['RACK_ENV']}.db")
+require 'irb'
 IRB.start(__FILE__)
 
 

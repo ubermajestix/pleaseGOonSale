@@ -1,18 +1,12 @@
-require 'rubygems'
-require 'sinatra/base'
-require 'json'
-require 'sinatra/activerecord'
-require 'warden'
-require 'less'
-require 'open-uri' # so we can stream the swatch file
-require 'chunky_png'
-require 'pony'
-require 'bcrypt'
-require 'extlib'
-require 'digest/sha1'
-require 'rack-flash'
-Dir['./models/*'].each{|m| require m}
-Dir['./lib/*.rb'].each{|l| require l}
+require "bundler/setup"
+Bundler.require(:runtime)
+# Dir['./models/*'].each{|m| require m}
+# Dir['./lib/*.rb'].each{|l| require l}
+%w(models lib).each do |path|
+  Dir[ File.join(File.dirname(__FILE__), path, '/**/*.rb') ].each do |m|
+    require m
+  end
+end
 
 # require 'dragonfly'
 # Dragonfly[:images].configure_with(:rmagick) do |d|

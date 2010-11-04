@@ -24,6 +24,7 @@ class OnsaleApp < Sinatra::Base
   end
   
   get '/' do
+    redirect '/my_rack' if logged_in?
     erb :index
   end
   
@@ -39,17 +40,17 @@ class OnsaleApp < Sinatra::Base
   end
   
   get "/item/create" do
-    # TODO items belong_to user
-    # user = User.find(params['user_id'])
     u = User.first(:conditions=>{:confirmation_code => params["api_key"]})
     begin
-      params['item']['user_id'] = u.id
-      item = Item.create!(params['item']) 
+      puts "="*45
+      puts params['item'].inspect
+      puts "="*45
+      item = Item.find_or_create_by_sku(params['item']['sku'], params['item']) 
+      u.items << item
       params["jsonp"] + "(#{item.to_json})"
     rescue StandardError => e
-      puts e.inspect
-      puts e.message.inspect
-      params["jsonp"] + "({error: '#{e.message.gsub('Validation failed: Sku ','')}'})"
+      puts e.message.gsub('Validation failed: Item ','')
+      params["jsonp"] + "({error: '#{e.message.gsub('Validation failed: Item ','')}'})"
     end
   end
   

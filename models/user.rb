@@ -1,3 +1,4 @@
+require 'digest/sha1'
 class User < ActiveRecord::Base
   
   attr_accessor :password
@@ -10,8 +11,8 @@ class User < ActiveRecord::Base
   # TODO rake task that deletes/locks users after x days of not confirming
   before_create :create_confirmation_code
   
-  has_many :items
-  
+  has_many :users_item
+  has_many :items, :through => :users_item
   
   def self.authenticate(email, password)
     u = User.first( :conditions => {:email=>email})
@@ -25,7 +26,11 @@ class User < ActiveRecord::Base
   
   def self.confirm(code)
     u = first(:conditions=>{:confirmation_code => code})
-    u ? (u.update_attributes(:has_confirmed => true); return u) : nil
+    u ? (u.confirm!; return u) : nil
+  end
+  
+  def confirm!
+    update_attributes(:has_confirmed => true)
   end
   
   def authenticated?(password)

@@ -3,13 +3,16 @@ class Item < ActiveRecord::Base
   attr_accessor  :raw_price
   attr_accessor  :raw_colors
 
-  belongs_to :user
-  has_many :colors, :foreign_key => :sku
+  has_many :users_item
+  has_many :items_colors
+  has_many :users, :through => :users_item
+  has_many :colors, :through => :items_colors
+  
+  validates_uniqueness_of :sku,  :message => "This item is already on your rack!"
 
   before_save :store_price_as_cents
   before_save :process_colors
   
-  validates_uniqueness_of :sku, :scope => :user_id, :message => "This item is already on your rack!"
   
   def formatted_price
     "$%.2f" % (self.price/100.0)
