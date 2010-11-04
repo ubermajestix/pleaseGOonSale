@@ -32,7 +32,7 @@ private
     self.raw_colors.each do |color|
       color['sku'] = self.sku
       self.colors << Color.create(color)
-    end
+    end if self.raw_colors  
   end
   
 end

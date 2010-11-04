@@ -41,16 +41,11 @@ class OnsaleApp < Sinatra::Base
   
   get "/item/create" do
     u = User.first(:conditions=>{:confirmation_code => params["api_key"]})
-    begin
-      puts "="*45
-      puts params['item'].inspect
-      puts "="*45
-      item = Item.find_or_create_by_sku(params['item']['sku'], params['item']) 
-      u.items << item
+    item = Item.add_item(params['item'],u) 
+    if item.errors.on_base
+      params["jsonp"] + "({error: '#{item.errors_on_base. item.to_json}'})"
+    else
       params["jsonp"] + "(#{item.to_json})"
-    rescue StandardError => e
-      puts e.message.gsub('Validation failed: Item ','')
-      params["jsonp"] + "({error: '#{e.message.gsub('Validation failed: Item ','')}'})"
     end
   end
   

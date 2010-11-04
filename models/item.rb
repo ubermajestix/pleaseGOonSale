@@ -14,6 +14,25 @@ class Item < ActiveRecord::Base
   before_save :process_colors
   
   
+  def self.add_item(attrs, user)
+    item = Item.find_or_create_by_sku(attrs['sku'], attrs)
+    begin
+      user.items << item
+      item
+    rescue StandardError => e
+      item.errors.add_to_base 'This item is already on your rack!'
+      item
+    end
+  end
+  
+  def on_sale?
+    !!sale_item
+  end
+  
+  def sale_item
+    SaleItem.find_by_sku(sku)
+  end
+  
   def formatted_price
     "$%.2f" % (self.price/100.0)
   end
