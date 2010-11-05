@@ -9,7 +9,7 @@ module Sinatra
     end
     
     def current_user
-      env['warden'].user
+      User.find(env['warden'].user.id)
     end
     
     def logged_in?

@@ -3,7 +3,7 @@ class Color < ActiveRecord::Base
   
   attr_accessor :swatch_url
   
-  validates_presence_of :name, :hex, :sku
+  # validates_presence_of :name, :hex
   # TODO validate hex is unique for a given sku
   
   before_validation :process_swatch

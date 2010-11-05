@@ -18,9 +18,9 @@ class OnsaleApp < Sinatra::Base
     # puts "="*45
     # puts env.keys.sort
     # puts "="*45
-    # puts "="*45
-    # puts params.inspect
-    # puts "="*45
+    puts "="*45
+    puts params.inspect
+    puts "="*45
   end
   
   get '/' do
@@ -34,16 +34,21 @@ class OnsaleApp < Sinatra::Base
     @bookmarklet.gsub!("api_key = ''", "api_key = '#{current_user.confirmation_code}'")
     @bookmarklet.gsub!("host = ''", "host = '#{@host}'")
     @bookmarklet.gsub!("<-host->", @host)
-    user = User.find(current_user.id)
-    @items = user.items.reverse
+    @items = current_user.items.reverse
+    puts "="*45
+    puts current_user.inspect
+    puts "="*45
     erb :my_rack
   end
   
   get "/item/create" do
     u = User.first(:conditions=>{:confirmation_code => params["api_key"]})
-    item = Item.add_item(params['item'],u) 
+    puts "="*45
+    puts u.inspect
+    puts "="*45
+    item = Item.add_item(params['item'], u) 
     if item.errors.on_base
-      params["jsonp"] + "({error: '#{item.errors_on_base. item.to_json}'})"
+      params["jsonp"] + "({error: '#{item.errors.on_base}'})"
     else
       params["jsonp"] + "(#{item.to_json})"
     end

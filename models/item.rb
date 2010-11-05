@@ -20,8 +20,10 @@ class Item < ActiveRecord::Base
       user.items << item
       item
     rescue StandardError => e
+      puts e.inspect
+      puts e.backtrace
       item.errors.add_to_base 'This item is already on your rack!'
-      item
+      return item
     end
   end
   
@@ -46,7 +48,6 @@ private
   def process_colors
     #TODO send raw_colors as an array of hashes
     self.raw_colors.each do |color|
-      color.last['sku'] = self.sku
       self.colors << Color.create(color.last)
     end if self.raw_colors
   end

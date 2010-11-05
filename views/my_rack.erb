@@ -1,9 +1,13 @@
 drag this link into your bookmarks:    
 <a title="drag this to your bookmarks" href="<%= @bookmarklet %>">pleasegoOnSale!</a>
 <h2><%= @items.length %> items</h2>
+<table>
 <% @items.each do |item| %>
+<tr><td colspan=100><h1>Item <%= item.on_sale? ? 'is' : 'is not'  %> on sale<%='!!!' if item.on_sale? %></h1></td></tr>
   <tr>
-    <td><img src="<%= item.image_url %>"></td>
+    <td colspan=100><img src="<%= item.image_url %>"></td>
+  </tr>
+  <tr style="border-bottom:2px solid #aaa; margin-bottom:10px">  
     <td><%= item.name %></td>
     <td><%= item.formatted_price %></td>
     <td><a href="<%= item.store_url %>">view</a></td>
@@ -15,3 +19,4 @@ drag this link into your bookmarks:
     <td><%= item.sku %></td>
   </tr>
 <% end %>
+</table>

@@ -7,6 +7,7 @@ class CreateUser < ActiveRecord::Migration
       t.string :confirmation_code
       t.boolean :has_confirmed, :default => false
     end 
+    User.create(:email=>"tyler@pleasegoonsale.com", :password=>"boom1!", :name=>'tyler', :has_confirmed=>true)
   end
 
   def self.down
