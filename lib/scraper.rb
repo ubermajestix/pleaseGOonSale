@@ -25,24 +25,19 @@ class Scraper
     @logger = log
   end
   
-  def start(opts={})
-    r = open("http://www.anthropologie.com/anthro/catalog/category.jsp?id=SHOPSALE", "User-Agent" => random_browser_agent)
+  def anthro(opts={})
+    category_page = opts[:category_page] || "http://www.anthropologie.com/anthro/catalog/category.jsp?id=SHOPSALE"
+    item_class = opts[:item_class] || SaleItem
+    r = open(category_page, "User-Agent" => random_browser_agent)
     if r.status.first.to_i < 400
       doc = Nokogiri::HTML(r.read)
       r.close!
       categories << doc.search('#leftnav-content li a').map{|e| e.get_attribute('href')}.compact.uniq.map{|e| e.match(/(\?|\&)(id\=)(\S+)/)[3]}
       categories.flatten!
-      logger.info "got categories"
       download_categories
-      logger.info "downloaded categories"
-      parse_category_html
-      logger.info "parsed category html"
-      threaded_parsing
-      logger.info "parse #{item_queue.length} items"
-      SaleItem.delete_all
+      parse_category(item_class)
       threaded_saving
-      logger.info "saved #{SaleItem.count} items"
-      
+      logger.info "saved #{item_class.count} items"
     end
   end
   
@@ -52,6 +47,10 @@ class Scraper
   
   def category_html_queue
     @category_html_queue ||= Queue.new
+  end
+  
+  def item_queue
+    @item_queue ||= Queue.new
   end
   
   def download_categories
@@ -65,41 +64,15 @@ class Scraper
     threads.each{|t| t.join}
   end
   
-  def category_nokogiri_docs
-    @category_nokogiri_docs ||= Queue.new
-  end
-  
-  def item_queue
-    @item_queue ||= Queue.new
-  end
-  
-  def parse_category_html
+  def parse_category(item_class)
     logger.info(category_html_queue.length)
     while not category_html_queue.empty? do
       html = category_html_queue.pop
       doc = Nokogiri::HTML(html.read)
-      doc.css('td').each{|td| category_nokogiri_docs << td }
       html.close!
+      logger.info("found #{doc.css('td').length} items")
+      doc.css('td').each{|td| parse_item(td, item_class) }
     end
-  end
-  
-  def threaded_parsing
-    threads = []
-    # category_nokogiri_docs.each do |html|
-    # 2.times do
-      # threads << Thread.new(){
-        # item_threads = []
-        # doc.css('td').each do |e|
-        #   item_threads << Thread.new(td){|element|
-        while not category_nokogiri_docs.empty? do
-            parse_item_and_save(category_nokogiri_docs.pop)
-          end
-          # }
-        # end
-        # item_threads.each{|t| t.join}
-      # }
-    # end
-    threads.each{|t| t.join}
   end
   
   def threaded_saving
@@ -127,22 +100,22 @@ class Scraper
     threads.each{|t| t.join}
   end
   
-  def parse_item_and_save(element)
+  def parse_item(element, item_class)
     if(element.at_css('div.imageWrapper') && element.at_css('span.PriceAlertText'))
-      item = SaleItem.new
+      item = item_class.new
       begin
         item.sku                 = element.at_css('div.imageWrapper a').get_attribute('href').match(/(\?|\&)(id\=)(S?\d+)/)[3]
         item.store_url           = "http://www.anthropologie.com/anthro/catalog/productdetail.jsp?&id=" << item.sku
         item.image_url           = element.css('div.colorSelector script').last.inner_html.match(/(http:\/\/\S+)(\?)/)[1]
         item.name                = element.at_css('div.imageWrapper img').get_attribute('title')
-        item.raw_sale_price      = element.at_css('span.PriceAlertText').text.strip.inspect
+        item.raw_sale_price      = element.at_css('span.PriceAlertText').text.strip.inspect if item_class == SaleItem
         item.raw_original_price  = element.at_css('span.wasPrice').text.gsub('...was ','')
         item.raw_colors          = []
         element.css('div.colorSelector img').each do |color|
          item.raw_colors << {:swatch_url => color.get_attribute('src'), :name => color.get_attribute('alt')}
         end
         logger.info "saving #{item.inspect}"
-        item_queue << item  
+        item_queue << item if item.valid?
       rescue StandardError => e
         logger.error(e)
         logger.error item.inspect if item

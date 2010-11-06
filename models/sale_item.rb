@@ -9,6 +9,8 @@ class SaleItem < ActiveRecord::Base
   
   has_many :colors, :foreign_key => :sku
   
+  validates_presence_of :raw_sale_price
+  
   def self.match
     sale_items = SaleItem.all
     items_on_sale = Item.all(:conditions=>["sku in (?)", sale_items.map(&:sku)])
