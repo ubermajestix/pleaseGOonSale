@@ -3,7 +3,7 @@ require './environment'
 class OnsaleApp < Sinatra::Base
  
   enable :session, :reload
-  set :database, 'sqlite://development.db'
+  set :database, ENV['DATABASE_URL']
   set :app_file, __FILE__
   helpers Sinatra::Auth
   use Rack::Flash

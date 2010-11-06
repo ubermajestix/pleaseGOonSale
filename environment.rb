@@ -7,7 +7,7 @@ Bundler.require(:runtime)
     require m
   end
 end
-
+ENV['DATABASE_URL'] ||= 'postgres://pgos:pgos1!@localhost/pgos'
 # require 'dragonfly'
 # Dragonfly[:images].configure_with(:rmagick) do |d|
 #   d.url_path_prefix = '/media'
