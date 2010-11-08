@@ -29,9 +29,9 @@
       $.ajax({
         jsonp: 'jsonp',
         dataType: 'jsonp',
-        url: 'http://'+host + '/item/create',
+        url: 'http://'+host+'/users/'+api_key+'/items',
         // type: 'POST',
-        data: {item:item, api_key: api_key},
+        data: {item: item},
         beforeSend:function(){},
         success: function(json){
           log(json)

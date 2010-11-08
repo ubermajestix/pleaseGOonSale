@@ -1,0 +1,19 @@
+---
+# http://documentcloud.github.com/jammit/#configuration
+
+# to force a rebuild to make sure minification works, run
+#
+#   rm -r public/assets && jammit -f && ls -lh public/assets/
+#
+# uncomment this to load up the minified versions in development
+# package_assets: always
+
+javascripts:
+  main:
+    - "public/javascripts/jquery-1.4.2.min.js"
+    - "public/javascripts/underscore.min.js"
+
+stylesheets:
+  main:
+    - "public/stylesheets/uber.css"
+

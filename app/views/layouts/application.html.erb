@@ -1,14 +1,36 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Pleasegoonsale</title>
-  <%= stylesheet_link_tag :all %>
-  <%= javascript_include_tag :defaults %>
-  <%= csrf_meta_tag %>
-</head>
-<body>
 
-<%= yield %>
-
-</body>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+	<head>
+		<meta content="text/html;charset=UTF-8" http-equiv="content-type"/>
+		<title>pleasegoonsale.com - we love to shop online. we love to save online.</title>
+    <%= include_stylesheets :main, :media => "all" %>
+    <%= include_javascripts :main %>
+		<script type="text/javascript" language="javascript" charset="utf-8">
+		
+      //<![CDATA[
+      $(function(){
+        // pleasegoonsale.init();
+      });
+      //]]>
+    </script>
+	</head> 
+	<body>
+	  <div class="header">
+	    <div class="userinfo">
+	      <%if user_signed_in? %>
+  	      <a href="/user/edit"><%= current_user.email  %></a> |
+  	      <a href="/logout">logout</a>
+	      <% else %>
+	        <a href="/login">login</a> | 
+	        <a href="/signup">signup</a>
+	      <% end %>
+	    </div>
+	    <div class="logo">
+	    </div>
+	    notice: <%= flash[:notice] %> <br/>
+	  </div>
+	  <div class="wrapper">
+      <%= yield %>
+    </div>
+  </body>
 </html>

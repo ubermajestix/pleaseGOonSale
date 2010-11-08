@@ -39,7 +39,7 @@ class Scraper
       # DELTE ALL FOR FOR TESTING ONLY
       item_class.delete_all unless ENV['RACK_ENV'] == 'production'
       threaded_saving
-      logger.info "saved #{item_class.count} items"
+      logger.info "saved #{saved_items.length} new items for a total of #{item_class.count} #{item_class}s"
     end
   end
   
@@ -53,6 +53,10 @@ class Scraper
   
   def item_queue
     @item_queue ||= Queue.new
+  end
+  
+  def saved_items
+    @saved_items ||= []
   end
   
   def download_categories
@@ -95,7 +99,9 @@ class Scraper
         #   item_threads << Thread.new(td){|element|
         while not item_queue.empty? do
           begin
-            item_queue.pop.save!
+            item = item_queue.pop
+            item.save!
+            saved_items << item if item.valid?
           rescue StandardError => e
             logger.error(e)
             logger.error
@@ -113,14 +119,10 @@ class Scraper
     if(element.at_css('div.imageWrapper'))
       item = item_class.new
       begin
+        javascript               = element.css('script').map(&:inner_html).join('')
         item.sku                 = element.at_css('div.imageWrapper a').get_attribute('href').match(/(\?|\&)(id\=)(S?\d+)/)[3]
         item.store_url           = "http://www.anthropologie.com/anthro/catalog/productdetail.jsp?&id=" << item.sku
-        item.image_url           = element.css('script').map(&:inner_html).join('').match(/(http:\/\/images.anthropologie.com\/is\/image\/Anthropologie\/\d+_\d+_[a-z])/)[1]
-        # .get_attribute('src')
-        puts "="*45
-        puts item.image_url.inspect
-        puts "="*45
-        # item.image_url           = element.css('div.colorSelector script').last.inner_html.match(/(http:\/\/\S+)(\?)/)[1] if item_class == SaleItem
+        item.image_url           = javascript.match(/(http:\/\/images.anthropologie.com\/is\/image\/Anthropologie\/\d+_\d+_[a-z])/)[1] if javascript.match(/(http:\/\/images.anthropologie.com\/is\/image\/Anthropologie\/\d+_\d+_[a-z])/)
         item.name                = element.at_css('div.imageWrapper img').get_attribute('title')
         item.raw_price           = element.at_css('span.price').text.strip if item_class == Item
         item.raw_sale_price      = element.at_css('span.PriceAlertText').text.strip if item_class == SaleItem && element.at_css('span.PriceAlertText')
@@ -129,7 +131,7 @@ class Scraper
         # element.css('div.colorSelector img').each do |color|
         #  item.raw_colors << {:swatch_url => color.get_attribute('src'), :name => color.get_attribute('alt')}
         # end
-        logger.info "saving #{item.inspect}"
+        logger.info "queing #{item.sku}"
         item_queue << item #if item.valid?
       rescue StandardError => e
         logger.error(e)

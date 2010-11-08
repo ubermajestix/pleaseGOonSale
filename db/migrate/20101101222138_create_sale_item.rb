@@ -7,10 +7,11 @@ class CreateSaleItem < ActiveRecord::Migration
       t.integer :original_price
       t.string  :store_url
       t.string  :image_url
+      t.timestamps 
     end
   end
 
   def self.down
-    drop_tables :sale_items
+    drop_table :sale_items
   end
 end

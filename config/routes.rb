@@ -1,4 +1,16 @@
 Pleasegoonsale::Application.routes.draw do
+  
+  resources :users, :only => [] do
+    resources :items, :only=>[:destroy]  do
+      get :create, :on => :collection, :constraints => { :user_id => /\S{20}/ }
+    end
+  end
+  devise_for :users
+  resources :sale_items
+  match 'my_rack' => 'users#my_rack'
+  root :to => "users#my_rack"
+  
+  
   # The priority is based upon order of creation:
   # first created -> highest priority.
 

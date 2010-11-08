@@ -39,13 +39,13 @@ function wait_for_script_load(look_for, callback) {
 }
 
 (function(){
-  importCSS('http://'+host+'/css/cleanslate.css');
-  importCSS('http://'+host+'/css/bookmarklet.css');
+  importCSS('http://'+host+'/stylesheets/cleanslate.css');
+  importCSS('http://'+host+'/stylesheets/bookmarklet.css');
   // TODO change this to genderated css for production
-  importJS('http://'+host+'/js/jquery-1.4.2.min.js', 'jQuery', function() { // Load everything else when it is done.
+  importJS('http://'+host+'/javascripts/jquery-1.4.2.min.js', 'jQuery', function() { // Load everything else when it is done.
     jQuery.noConflict();
-    importJS('http://'+host+'/js/underscore.min.js');
-    importJS('http://'+host+'/js/pleasegoonsale.js', 'done_loading', function(){
+    importJS('http://'+host+'/javascripts/underscore.min.js');
+    importJS('http://'+host+'/javascripts/pleasegoonsale.js', 'done_loading', function(){
       pleasegoonsale.init();
     })
   });

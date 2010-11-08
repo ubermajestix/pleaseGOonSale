@@ -3,7 +3,7 @@ class CreateColor < ActiveRecord::Migration
     create_table :colors do |t|
       t.string :name
       t.string :hex
-      t.string :sku
+      t.timestamps 
     end
   end
 

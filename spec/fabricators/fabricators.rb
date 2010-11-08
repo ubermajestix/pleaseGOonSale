@@ -1,7 +1,6 @@
 Fabricator(:user) do
-  name Faker::Name.name
-  email Faker::Internet.email #{ Fabricate.sequence(:email) { |i| "user#{i}@example.com" } }
-  has_confirmed true
+  email { Fabricate.sequence(:email) { |i| "#{Faker::Name.first_name}@example.com" } }
+  confirmed_at Time.now
   password 'boom1!'
 end
 

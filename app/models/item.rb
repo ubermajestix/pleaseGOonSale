@@ -3,9 +3,9 @@ class Item < ActiveRecord::Base
   attr_accessor  :raw_price
   attr_accessor  :raw_colors
 
-  has_many :users_item
+  has_many :my_rack
   has_many :items_colors
-  has_many :users, :through => :users_item
+  has_many :users, :through => :my_rack
   has_many :colors, :through => :items_colors
   
   validates_uniqueness_of :sku

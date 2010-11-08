@@ -20,8 +20,12 @@ class SaleItem < ActiveRecord::Base
     puts "="*45
   end
   
-  def formatted_price
-    "$%.2f" % (self.price/100.0)
+  def formatted_sale_price
+    "$%.2f" % (self.sale_price/100.0)
+  end
+  
+  def formatted_original_price
+    "$%.2f" % (self.original_price/100.0)
   end
   
 private

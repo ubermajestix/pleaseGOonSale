@@ -3,6 +3,8 @@
 development:
   adapter: postgresql
   database: pgos
+  username: pgos
+  password: pgos1!
   pool: 5
   timeout: 5000
 
@@ -16,7 +18,11 @@ test:
   timeout: 5000
 
 production:
-  adapter: sqlite3
-  database: db/production.sqlite3
-  pool: 5
-  timeout: 5000
+  encoding: unicode
+  adapter: postgresql
+  port: 5432
+  host: ec2-75-101-167-19.compute-1.amazonaws.com
+  database: qmzxruylrc
+  username: qmzxruylrc
+  password: f5lxx1zz5pnorynqglhzmsp34
+

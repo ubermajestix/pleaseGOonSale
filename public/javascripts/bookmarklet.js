@@ -1,6 +1,6 @@
 javascript:(function(){var%20s=document.createElement('div');
-api_key = '';
-host = '';
+api_key = '<-api_key->';
+host = '<-host->';
 
 s.style.display = 'none';
 
@@ -16,7 +16,7 @@ s=document.createElement('script');
 
 s.setAttribute('type','text/javascript');
 
-s.setAttribute('src','http://<-host->/js/loader.js');
+s.setAttribute('src','http://<-host->/javascripts/loader.js');
 
 document.body.appendChild(s);
 
