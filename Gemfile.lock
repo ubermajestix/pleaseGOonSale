@@ -77,7 +77,6 @@ GEM
       gem_plugin (~> 0.2.3)
     mutter (0.5.3)
     nokogiri (1.4.3.1)
-    patron (0.4.10)
     pg (0.9.0)
     polyglot (0.3.1)
     rack (1.2.1)
@@ -139,7 +138,6 @@ DEPENDENCIES
   logging
   mongrel (= 1.2.0.pre2)
   nokogiri
-  patron
   pg
   rails (= 3.0.1)
   rake

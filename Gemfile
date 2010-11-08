@@ -5,8 +5,6 @@ group :runtime do
   gem 'pg'
   gem 'json'
   gem "logging"
-  gem "patron"
-  gem 'heroku'
   gem "nokogiri"
   gem 'devise'
   gem "warden" 
@@ -32,7 +30,6 @@ group :development, :test do
   gem 'pg'
   gem 'json'
   gem "logging"
-  gem "patron"
   gem 'heroku'
   gem "nokogiri"
   gem 'devise'

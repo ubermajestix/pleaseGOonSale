@@ -1,13 +1,5 @@
-#!/usr/bin/env ruby
-
-require 'rubygems'
-require 'logging'
-require 'patron'
 require 'open-uri'
-require 'nokogiri'
 require 'ostruct'
-require 'active_record'
-
 
 class Scraper
 
