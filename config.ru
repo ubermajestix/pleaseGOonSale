@@ -1,8 +1,4 @@
-require './onsale'
-use Rack::Session::Cookie
-use Warden::Manager do |manager|
-  manager.default_strategies :password
-  manager.failure_app = OnsaleApp
-end
-run OnsaleApp
+# This file is used by Rack-based servers to start the application.
 
+require ::File.expand_path('../config/environment',  __FILE__)
+run Pleasegoonsale::Application

@@ -10,6 +10,7 @@ class SaleItem < ActiveRecord::Base
   has_many :colors, :foreign_key => :sku
   
   validates_presence_of :raw_sale_price
+  validates_uniqueness_of :sku
   
   def self.match
     sale_items = SaleItem.all

@@ -8,7 +8,8 @@ class Item < ActiveRecord::Base
   has_many :users, :through => :users_item
   has_many :colors, :through => :items_colors
   
-  validates_uniqueness_of :sku,  :message => "This item is already on your rack!"
+  validates_uniqueness_of :sku
+  validates_presence_of :raw_price
 
   before_save :store_price_as_cents
   before_save :process_colors

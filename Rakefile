@@ -1,10 +1,7 @@
-ENV['DATABASE_URL'] ||= 'postgres://pgos:pgos1!@localhost/pgos'
+# Add your own tasks in files placed in lib/tasks ending in .rake,
+# for example lib/tasks/capistrano.rake, and they will automatically be available to Rake.
+
+require File.expand_path('../config/application', __FILE__)
 require 'rake'
-require './onsale'
-require 'sinatra/activerecord/rake'
 
-
-puts "="*45
-puts ENV['DATABASE_URL']
-puts "="*45
-Dir["#{File.dirname(__FILE__)}/lib/tasks/**/*.rake"].sort.each { |ext| load ext }
+Pleasegoonsale::Application.load_tasks

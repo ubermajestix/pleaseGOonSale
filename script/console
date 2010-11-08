@@ -1,9 +1,0 @@
-#!/usr/bin/env ruby -rubygems
-require 'active_record'
-Dir['./models/*'].each{|m| require m}
-ENV['RACK_ENV'] ||= 'development'
-ActiveRecord::Base.establish_connection(:adapter => "sqlite3", :database => "#{Dir.pwd}/#{ENV['RACK_ENV']}.db")
-require 'irb'
-IRB.start(__FILE__)
-
-

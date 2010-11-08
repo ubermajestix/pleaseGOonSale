@@ -17,6 +17,7 @@ drag this link into your bookmarks:
       <%# end %>
     </td>
     <td><%= item.sku %></td>
+    <td> <a href="/item/remove/<%= item.sku %>" method="delete">remove item</a> </td>
   </tr>
 <% end %>
 </table>

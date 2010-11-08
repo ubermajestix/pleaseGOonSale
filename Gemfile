@@ -1,13 +1,14 @@
 source :rubygems
+
 group :runtime do
+  gem 'rails', '3.0.1'
   gem 'pg'
   gem 'sinatra'
   gem 'json'
   gem "logging"
   gem "patron"
+  gem 'heroku'
   gem "nokogiri"
-  gem 'activerecord', "= 2.3.8"
-  gem 'sinatra-activerecord', :require => "sinatra/activerecord"
   gem 'warden'
   gem 'less'
   gem 'chunky_png'
@@ -15,8 +16,6 @@ group :runtime do
   gem 'pony'
   gem 'bcrypt-ruby', :require => "bcrypt"
   gem 'extlib'
-  gem 'rack-flash'
-  
 end
 
 group :test do
@@ -26,7 +25,6 @@ group :test do
   gem 'rcov'
   gem 'bcrypt-ruby', :require => 'bcrypt'
   gem 'sqlite3-ruby', :require => 'sqlite3'
-  gem 'activerecord', "= 2.3.8"
   gem 'json'
   gem "logging"
   gem "patron"
@@ -34,3 +32,10 @@ group :test do
   gem 'ffaker'
   gem 'fabrication'
 end
+
+# Bundle gems for the local environment. Make sure to
+# put test-only gems in this group so their generators
+# and rake tasks are available in development mode:
+# group :development, :test do
+#   gem 'webrat'
+# end
