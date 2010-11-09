@@ -18,11 +18,11 @@
 	  <div class="header">
 	    <div class="userinfo">
 	      <%if user_signed_in? %>
-  	      <a href="/user/edit"><%= current_user.email  %></a> |
-  	      <a href="/logout">logout</a>
+	      <%= link_to current_user.email, edit_user_registration_path %> |
+	      <%= link_to "logout", destroy_user_session_path %>
 	      <% else %>
-	        <a href="/login">login</a> | 
-	        <a href="/signup">signup</a>
+	        <%= link_to "login", new_user_session_path %> | 
+	        <%= link_to "signup", new_user_registration_path %>
 	      <% end %>
 	    </div>
 	    <div class="logo">
