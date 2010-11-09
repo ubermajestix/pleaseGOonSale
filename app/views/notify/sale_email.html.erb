@@ -1,13 +1,16 @@
-Hey there!
+<p>Hey there!</p>
 
-<%= @items.length %> items from your pleasegoonsale.com rack have actually gone on sale! 
+<p><%= @items.length %> items from your pleasegoonsale.com rack have actually gone on sale! </p>
 
 <%for item in @items %>
+<div class="name">
   <%= image_tag item.image_url %>
-  <%= item.name %>
-  was: <%= item.formatted_original_price %>
-  now: <%= item.formatted_sale_price %>
-  <a href="<%= item.store_url %>"> buy it now</a>
+  <p><%= item.name %></p>
+ <p> was: <%= item.formatted_original_price %>
+  now: <%= item.formatted_sale_price %></p>
+  <p><a href="<%= item.store_url %>"> buy it now</a></p>
+</div>
+
 <%end%>
 
-See all your items on your <%= link_to "pleasegoonsale.com rack", my_rack_path %>
+<p>See all your items on your <%= my_rack_url :host=>@host %></p>
