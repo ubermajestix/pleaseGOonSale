@@ -1,6 +1,6 @@
 source :rubygems
 
-group :runtime do
+group :runtime, :production do
   gem 'rails', '3.0.1'
   gem 'pg'
   gem 'json'
