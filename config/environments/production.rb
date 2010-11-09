@@ -55,6 +55,7 @@ Pleasegoonsale::Application.configure do
     :user_name            => 'welcome@pleasegoonsale.com',
     :password             => 'pgos1!',
     :authentication       => 'plain',
-    :enable_starttls_auto => true  }
+    :enable_starttls_auto => true  
   }
+  
 end
