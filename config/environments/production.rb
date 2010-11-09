@@ -52,7 +52,7 @@ Pleasegoonsale::Application.configure do
     :address              => "smtp.gmail.com",
     :port                 => 587,
     :domain               => 'pleasegoonsale.com',
-    :user_name            => 'welcome@pleasegoonsale.com',
+    :user_name            => 'no-reply@pleasegoonsale.com',
     :password             => 'pgos1!',
     :authentication       => 'plain',
     :enable_starttls_auto => true  

@@ -12,7 +12,7 @@ class Item < ActiveRecord::Base
   validates_presence_of :raw_price
 
   before_save :store_price_as_cents
-  before_save :process_colors
+  # before_save :process_colors
   
   
   def self.add_item(attrs, user)
