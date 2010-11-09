@@ -24,9 +24,6 @@ group :development, :test do
   gem 'sqlite3-ruby', :require => 'sqlite3'
   gem 'ffaker'
   gem 'fabrication'
-  gem "mongrel", "1.2.0.pre2"
-  gem "cgi_multipart_eof_fix"
-  gem "fastthread"
   gem 'pg'
   gem 'json'
   gem "logging"
