@@ -54,6 +54,7 @@ class Scraper
   def download_categories
     threads = []
     categories.each do |cat|
+      cat_id = cat
       # threads << Thread.new(cat){|cat_id|
         url=<<-url
         http://www.anthropologie.com/anthro/catalog/category.jsp?
