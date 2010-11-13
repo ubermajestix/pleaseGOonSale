@@ -10,14 +10,15 @@ namespace :db do
     task :size => :environment do
       sql = "SELECT tablename FROM pg_tables WHERE schemaname = 'public' ORDER BY tablename;"
       tables = ActiveRecord::Base.connection.execute(sql)
-      tables.collect! do |table|
+      sizes = []
+      tables.each do |table|
         name = table['tablename']
         sql = "SELECT pg_size_pretty(pg_total_relation_size('#{name}'));"
         res = ActiveRecord::Base.connection.execute(sql)
         puts "#{name} #{res[0]['pg_size_pretty']}"
-        res[0]['pg_size_pretty'].gsub(/\d+/)
+        sizes << res[0]['pg_size_pretty'].gsub(/\d+/)
       end
-      puts tables.sum
+      puts sizes.sum
     end
   end
 end
