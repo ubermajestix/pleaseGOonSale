@@ -16,7 +16,7 @@ namespace :db do
         sql = "SELECT pg_size_pretty(pg_total_relation_size('#{name}'));"
         res = ActiveRecord::Base.connection.execute(sql)
         puts "#{name} #{res[0]['pg_size_pretty']}"
-        sizes << res[0]['pg_size_pretty'].gsub(/\d+/)
+        sizes << res[0]['pg_size_pretty'].gsub(/\D+/,'')
       end
       puts sizes.sum
     end
