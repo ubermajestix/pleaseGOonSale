@@ -54,7 +54,7 @@ class Scraper
   def download_categories
     threads = []
     categories.each do |cat|
-      threads << Thread.new(cat){|cat_id|
+      # threads << Thread.new(cat){|cat_id|
         url=<<-url
         http://www.anthropologie.com/anthro/catalog/category.jsp?
         _DARGS=/anthro/catalog/common/subcategory_viewall.jsp_A&
@@ -64,9 +64,9 @@ class Scraper
         logger.info "downloading #{cat_id}"
         url.gsub!(/\s/,'')
         category_html_queue << open(url, "User-Agent" => random_browser_agent)
-      }
+      # }
     end
-    threads.each{|t| t.join}
+    # threads.each{|t| t.join}
   end
   
   def parse_category(item_class)
