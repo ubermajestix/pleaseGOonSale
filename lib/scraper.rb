@@ -64,7 +64,9 @@ class Scraper
         url
         logger.info "downloading #{cat_id}"
         url.gsub!(/\s/,'')
-        category_html_queue << open(url, "User-Agent" => random_browser_agent)
+        html = open(url, "User-Agent" => random_browser_agent)
+        category_html_queue << html.read
+        html.close!
       # }
     end
     # threads.each{|t| t.join}
@@ -74,8 +76,7 @@ class Scraper
     logger.info(category_html_queue.length)
     while not category_html_queue.empty? do
       html = category_html_queue.pop
-      doc = Nokogiri::HTML(html.read)
-      html.close!
+      doc = Nokogiri::HTML(html)
       logger.info("found #{doc.css('td').length} items")
       doc.css('td').each{|td| parse_item(td, item_class) }
     end
@@ -95,9 +96,10 @@ class Scraper
             item = item_queue.pop
             item.save!
             saved_items << item if item.valid?
+          rescue ActiveRecord::RecordInvalid => e
+            logger.error(e.message)
           rescue StandardError => e
             logger.error(e)
-            logger.error
           end
         end
           # }
