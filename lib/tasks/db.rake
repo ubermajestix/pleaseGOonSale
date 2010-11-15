@@ -15,6 +15,7 @@ namespace :db do
         name = table['tablename']
         sql = "SELECT pg_size_pretty(pg_total_relation_size('#{name}'));"
         res = ActiveRecord::Base.connection.execute(sql)
+        puts res[0].inspect
         puts "#{name} #{res[0]['pg_size_pretty']}"
         sizes << res[0]['pg_size_pretty'].gsub(/\D+/,'')
       end

@@ -15,7 +15,7 @@ describe SaleItemObserver do
     ActionMailer::Base.deliveries.should be_empty
   end
   
-  it "send email for an item on a rack" do
+  it "should send email for an item on a rack" do
     sale_item = Fabricate(:sale_item, :sku=>@item_2.sku)
      @observer.after_create(sale_item)
     ActionMailer::Base.deliveries.should_not be_empty

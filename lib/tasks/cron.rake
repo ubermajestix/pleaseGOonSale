@@ -8,4 +8,9 @@ task :cron => :environment do
   user = User.find_by_email("tyler@pleasegoonsale.com")
   user.items = Item.all
   user.save!
+  User.find_each do |user|
+    # TODO named scope this
+    sale_items = user.items.collect{|i| i.sale_item}.uniq.compact
+    Notify.sale_email(user,sale_items).deliver
+  end
 end
