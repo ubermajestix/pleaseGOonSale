@@ -1,3 +1,5 @@
+include ActionView::Helpers::NumberHelper
+
 namespace :db do
   desc "how big is the database?"
   task :size => :environment do
@@ -13,13 +15,13 @@ namespace :db do
       sizes = []
       tables.each do |table|
         name = table['tablename']
-        sql = "SELECT pg_size_pretty(pg_total_relation_size('#{name}'));"
+        sql = "SELECT pg_total_relation_size('#{name}');"
         res = ActiveRecord::Base.connection.execute(sql)
-        puts res[0].inspect
-        puts "#{name} #{res[0]['pg_size_pretty']}"
-        sizes << res[0]['pg_size_pretty'].gsub(/\D+/,'')
+        puts "#{name} #{number_to_human_size(res[0]['pg_total_relation_size']).rjust(40-name.length)}"
+        sizes << res[0]['pg_total_relation_size'].to_i
       end
-      puts sizes.sum
+      puts "Total in all tables: #{number_to_human_size(sizes.sum).rjust(20)}"
+    
     end
   end
 end
